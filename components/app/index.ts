@@ -13,6 +13,7 @@ class MetarWebApp extends HTMLElement{
     constructor(){
         super();
         let metarApi = new AviationWeatherController();
+        //herokuapp used as a proxy becuase the AWC API doesn't return headers. 
         metarApi.url = "https://cors-anywhere.herokuapp.com/" + "https://www.aviationweather.gov/cgi-bin/json/MetarJSON.php";
         this.metarControl = new MetarControl(metarApi);
         this.appendChild(this.metarControl);
