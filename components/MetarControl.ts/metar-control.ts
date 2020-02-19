@@ -12,9 +12,14 @@ class MetarControl extends HTMLElement {
         return this._data;
     }
     public set data(value: MetarData[]) {
+        let oldData = this.aviationCards.slice();
         this._data = value;
         this.WipeListItems();
         this.CreateListItems();
+        this.OldDataHandoff(oldData);
+        if(this.searchBox.value != ''){
+            this.FilterCards();
+        }
     }
     /**API to get the data from */
     metarApi: MetarController;
@@ -24,7 +29,8 @@ class MetarControl extends HTMLElement {
     aviationCards: AviationCard[] = [];
     /**User can filter Metar Data on this card */
     searchBox: HTMLInputElement = document.createElement("input");
-
+    /**Holds the refernces to stop autorefreshing */
+    autoRefresh:number;
     constructor(metarApi: MetarController) {
         super();
         this.metarApi = metarApi;
@@ -32,6 +38,7 @@ class MetarControl extends HTMLElement {
         this.appendChild(this.list);
         this.searchBox.addEventListener("input", this.SearchTextHandler.bind(this));
         this.GetLatestReports();
+        this.autoRefresh = setInterval(this.GetLatestReports.bind(this), 300000);
     }
 
     /**
@@ -54,19 +61,40 @@ class MetarControl extends HTMLElement {
     /**Clear the list */
     WipeListItems() {
         this.list.innerHTML = '';
+        this.aviationCards = [];
     }
 
     /**Filters out aviation cards that don't contain the text in the search box */
     SearchTextHandler(event: Event) {
-        this.aviationCards.forEach(card => {
+        this.FilterCards();
+    }
+
+    FilterCards(){
+          this.aviationCards.forEach(card => {
             //If empty show all boxes
-            if (this.searchBox.value == '') {
+            if (this.searchBox.value == '' || (card.metarData.properties.id &&  card.metarData.properties.id.includes(this.searchBox.value))) {
                 card.classList.remove('hidden');
             }
             else if (card.metarData.properties.id &&  !card.metarData.properties.id.includes(this.searchBox.value)){
                 card.classList.add('hidden');
             }
         });
+    }
+
+    /**
+     * A quick dif for state of the new objects coming ine
+     * @param data - old aviation cards
+     */
+    OldDataHandoff(data:AviationCard[]){
+        this.aviationCards.forEach(aviationCard =>{
+            let oldCard = data.find(oldAviationCard =>{
+                if(oldAviationCard.metarData.properties.id && oldAviationCard.metarData.properties.obsTime && aviationCard.metarData.properties.id && aviationCard.metarData.properties.obsTime){
+                    return (aviationCard.metarData.properties.id == oldAviationCard.metarData.properties.id && aviationCard.metarData.properties.obsTime && oldAviationCard.metarData.properties.obsTime);
+                }
+            });
+            if(oldCard == undefined) return;
+            aviationCard.ToggleHidden(!oldCard.detailedViewOpen);
+        })
     }
 }
 

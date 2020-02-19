@@ -1,5 +1,6 @@
 /**
  * Implmentation using https://www.aviationweather.gov/ api for METAR reports
+ * Deatils at https://www.aviationweather.gov/help/webservice?page=metarjson currently
  */
 class AviationWeatherController {
     async getLatestReports() {
@@ -21,9 +22,18 @@ class AviationWeatherController {
 class AviationCard extends HTMLElement {
     constructor(data) {
         super();
+        /**Class to hide and unhide */
+        this.hiddenClass = 'hidden';
         this.metarData = data;
         this.CreateMinimalView();
         this.addEventListener('click', this.ClickHandler.bind(this));
+    }
+    /**Detailed Open */
+    get detailedViewOpen() {
+        if (this.fullView === undefined)
+            return false;
+        else
+            return !this.fullView.classList.contains(this.hiddenClass);
     }
     /**
      * Generates the minimal view for the card
@@ -43,7 +53,7 @@ class AviationCard extends HTMLElement {
     CreateFullView(hidden = true) {
         this.fullView = document.createElement("div");
         if (hidden)
-            this.fullView.classList.add("hidden");
+            this.ToggleHidden(hidden);
         this.appendChild(this.fullView);
         const placeHolder = 'N/A';
         //These could be cleaned up and the property check could go in a function but I prefer the readability here since I'm only dealing with a few properties. 
@@ -96,8 +106,26 @@ class AviationCard extends HTMLElement {
         if (this.fullView == undefined) {
             this.CreateFullView();
         }
-        if (this.fullView !== undefined) {
-            this.fullView.classList.toggle('hidden');
+        this.ToggleHidden();
+    }
+    /**
+     * Toggles whether or not the detailed view is open
+     * @param hide - optional force an unhide or hide
+     */
+    ToggleHidden(hide) {
+        if (this.fullView === undefined && hide === false) {
+            this.CreateFullView();
+        }
+        if (this.fullView === undefined)
+            return;
+        if (hide !== undefined) {
+            if (hide)
+                this.fullView.classList.add(this.hiddenClass);
+            else
+                this.fullView.classList.remove(this.hiddenClass);
+        }
+        else {
+            this.fullView.classList.toggle(this.hiddenClass);
         }
     }
 }
@@ -122,14 +150,20 @@ class MetarControl extends HTMLElement {
         this.appendChild(this.list);
         this.searchBox.addEventListener("input", this.SearchTextHandler.bind(this));
         this.GetLatestReports();
+        this.autoRefresh = setInterval(this.GetLatestReports.bind(this), 60000);
     }
     get data() {
         return this._data;
     }
     set data(value) {
+        let oldData = this.aviationCards.slice();
         this._data = value;
         this.WipeListItems();
         this.CreateListItems();
+        this.OldDataHandoff(oldData);
+        if (this.searchBox.value != '') {
+            this.FilterCards();
+        }
     }
     /**
      * Calls into the injected metarApi
@@ -150,17 +184,37 @@ class MetarControl extends HTMLElement {
     /**Clear the list */
     WipeListItems() {
         this.list.innerHTML = '';
+        this.aviationCards = [];
     }
     /**Filters out aviation cards that don't contain the text in the search box */
     SearchTextHandler(event) {
+        this.FilterCards();
+    }
+    FilterCards() {
         this.aviationCards.forEach(card => {
             //If empty show all boxes
-            if (this.searchBox.value == '') {
+            if (this.searchBox.value == '' || (card.metarData.properties.id && card.metarData.properties.id.includes(this.searchBox.value))) {
                 card.classList.remove('hidden');
             }
             else if (card.metarData.properties.id && !card.metarData.properties.id.includes(this.searchBox.value)) {
                 card.classList.add('hidden');
             }
+        });
+    }
+    /**
+     * A quick dif for state of the new objects coming ine
+     * @param data - old aviation cards
+     */
+    OldDataHandoff(data) {
+        this.aviationCards.forEach(aviationCard => {
+            let oldCard = data.find(oldAviationCard => {
+                if (oldAviationCard.metarData.properties.id && oldAviationCard.metarData.properties.obsTime && aviationCard.metarData.properties.id && aviationCard.metarData.properties.obsTime) {
+                    return (aviationCard.metarData.properties.id == oldAviationCard.metarData.properties.id && aviationCard.metarData.properties.obsTime && oldAviationCard.metarData.properties.obsTime);
+                }
+            });
+            if (oldCard == undefined)
+                return;
+            aviationCard.ToggleHidden(!oldCard.detailedViewOpen);
         });
     }
 }

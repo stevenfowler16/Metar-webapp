@@ -2,6 +2,7 @@ import { MetarController, MetarData} from "./metar-controller";
 
 /**
  * Implmentation using https://www.aviationweather.gov/ api for METAR reports
+ * Deatils at https://www.aviationweather.gov/help/webservice?page=metarjson currently 
  */
 class AviationWeatherController implements MetarController{
     url:string | undefined; 
