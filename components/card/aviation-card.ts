@@ -1,77 +1,107 @@
 import { MetarData } from "../controllers/metar-controller";
 
+/**
+ * Holds and display a Metar Data Item
+ */
 class AviationCard extends HTMLElement{
-    data:MetarData;
+    /**The Metar Data */
+    metarData:MetarData;
+    /**The Full View. Generated lazily*/
     fullView?: HTMLElement;
+
     constructor(data:MetarData){
         super();
-        this.data = data;
+        this.metarData = data;
         this.CreateMinimalView();
         this.addEventListener('click',this.ClickHandler.bind(this));
     }
 
+    /**
+     * Generates the minimal view for the card
+     */
     CreateMinimalView(){
-        let obsTime = this.data.properties.obsTime !== undefined ? this.data.properties.obsTime : 'N/A';
+        let obsTime = this.metarData.properties.obsTime !== undefined ? this.metarData.properties.obsTime : 'N/A';
         this.CreateLabel("Observed Time",obsTime);
-        let id = this.data.properties.id !== undefined ? this.data.properties.id : 'N/A';
+        let id = this.metarData.properties.id !== undefined ? this.metarData.properties.id : 'N/A';
         this.CreateLabel("Station Identifier",id);
-        let fltcat = this.data.properties.fltcat !== undefined ? this.data.properties.fltcat : 'N/A';
+        let fltcat = this.metarData.properties.fltcat !== undefined ? this.metarData.properties.fltcat : 'N/A';
         this.CreateLabel("Flight Category",fltcat);
     }
-
-    CreateFullView(){
+    
+    /**
+     * Generates the detailed view with all of the propertes of the Metar Data.
+     * @param hidden - defaults to true. Hide the full view on creation
+     */
+    CreateFullView(hidden = true){
         this.fullView = document.createElement("div");
-        this.fullView.classList.add("hidden");
+        if(hidden) this.fullView.classList.add("hidden");
+        
         this.appendChild(this.fullView);
 
-        let site = this.data.properties.site !== undefined ? this.data.properties.site : 'N/A';
+        const placeHolder = 'N/A';
+        
+        //These could be cleaned up and the property check could go in a function but I prefer the readability here since I'm only dealing with a few properties. 
+        let site = this.metarData.properties.site !== undefined ? this.metarData.properties.site : placeHolder;
         this.CreateLabel("Site",site,this.fullView);       
 
-        let prior = this.data.properties.prior !== undefined ? this.data.properties.prior : 'N/A';
+        let prior = this.metarData.properties.prior !== undefined ? this.metarData.properties.prior : placeHolder;
         this.CreateLabel("Prior",prior,this.fullView);
 
-        let temp = this.data.properties.temp !== undefined ? this.data.properties.temp.toString() : 'N/A';
+        let temp = this.metarData.properties.temp !== undefined ? this.metarData.properties.temp.toString() : placeHolder;
         this.CreateLabel("Temp",temp,this.fullView);
 
-        let dewPoint = this.data.properties.dewp !== undefined ? this.data.properties.dewp.toString() : 'N/A';
+        let dewPoint = this.metarData.properties.dewp !== undefined ? this.metarData.properties.dewp.toString() : placeHolder;
         this.CreateLabel("Dew Point",dewPoint,this.fullView);
 
-        let windSpeed = this.data.properties.wspd !== undefined ? this.data.properties.wspd.toString() : 'N/A';
+        let windSpeed = this.metarData.properties.wspd !== undefined ? this.metarData.properties.wspd.toString() : placeHolder;
         this.CreateLabel("Wind Speed",windSpeed,this.fullView);
 
-        let gust = this.data.properties.wgst !== undefined ? this.data.properties.wgst.toString() : 'N/A';
+        let gust = this.metarData.properties.wgst !== undefined ? this.metarData.properties.wgst.toString() : placeHolder;
         this.CreateLabel("Wind Gust",gust,this.fullView);
 
-        let windDirection = this.data.properties.wdir !== undefined ? this.data.properties.wdir.toString() : 'N/A';
+        let windDirection = this.metarData.properties.wdir !== undefined ? this.metarData.properties.wdir.toString() : placeHolder;
         this.CreateLabel("Wind Direction",windDirection,this.fullView);
 
-        let cover = this.data.properties.cover !== undefined ? this.data.properties.cover : 'N/A';
+        let cover = this.metarData.properties.cover !== undefined ? this.metarData.properties.cover : placeHolder;
         this.CreateLabel("Cover",cover,this.fullView);
 
-        let visibility = this.data.properties.visib !== undefined ? this.data.properties.visib.toString() : 'N/A';
+        let visibility = this.metarData.properties.visib !== undefined ? this.metarData.properties.visib.toString() : placeHolder;
         this.CreateLabel("Visibility",visibility,this.fullView);
 
-        let altimeter = this.data.properties.altim !== undefined ? this.data.properties.altim.toString() : 'N/A';
+        let altimeter = this.metarData.properties.altim !== undefined ? this.metarData.properties.altim.toString() : placeHolder;
         this.CreateLabel("Altimeter",altimeter,this.fullView);
 
-        let slp = this.data.properties.slp !== undefined ? this.data.properties.slp.toString() : 'N/A';
+        let slp = this.metarData.properties.slp !== undefined ? this.metarData.properties.slp.toString() : placeHolder;
         this.CreateLabel("Sea Level Pressure",slp,this.fullView);
 
-        let rawOb = this.data.properties.rawOb !== undefined ? this.data.properties.rawOb : 'N/A';
+        let rawOb = this.metarData.properties.rawOb !== undefined ? this.metarData.properties.rawOb : placeHolder;
         this.CreateLabel("Raw Metar",rawOb,this.fullView);        
     }
 
-    CreateLabel(text:string,value:string,appendTo?:HTMLElement){
+    /**
+     * Generates and attaches a label value combo
+     * @param text - The text for the label
+     * @param value - the text after the label
+     * @param appendTo - optional html element to append to, defaults to this
+     */
+    CreateLabel(text:string, value:string, appendTo?:HTMLElement){
         let div = document.createElement("div");
+        
         let label = document.createElement("label")
         label.textContent = text + ": ";
         div.appendChild(label);
+
         let labelValue = document.createElement("span");
         labelValue.textContent = value;
         div.appendChild(labelValue);
+
         appendTo === undefined ? this.appendChild(div) : appendTo.appendChild(div);
     }
 
+    /**
+     * Handles the click event on the card. Toggles between detailed view
+     * @param event -Click Event That is fired on the card
+     */
     ClickHandler(event:Event){
         if(this.fullView == undefined){
             this.CreateFullView();

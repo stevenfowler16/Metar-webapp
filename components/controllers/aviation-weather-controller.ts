@@ -1,5 +1,8 @@
 import { MetarController, MetarData} from "./metar-controller";
 
+/**
+ * Implmentation using https://www.aviationweather.gov/ api for METAR reports
+ */
 class AviationWeatherController implements MetarController{
     url:string | undefined; 
     
@@ -10,11 +13,15 @@ class AviationWeatherController implements MetarController{
             let data = await result.json() as AviationWeatherJsonResponse;
             return data.features;
         }
-        else throw Error(await result.statusText);
+        else throw Error(result.statusText);
     }
 }
+/**
+ * The object NOAA currently returns on their api
+ */
 class AviationWeatherJsonResponse{
     type:string = '';
     features:MetarData[] = [];
 }
+
 export {AviationWeatherController};

@@ -3,7 +3,11 @@ import { AviationWeatherController } from "../controllers/aviation-weather-contr
 import { MetarControl } from "../MetarControl.ts/metar-control";
 
 
+/**
+ * Web app class for pulling together the controllers and controls
+ */
 class MetarWebApp extends HTMLElement{
+
     metarControl: MetarControl;
 
     constructor(){
