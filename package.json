@@ -1,0 +1,26 @@
+{
+  "name": "metar-webapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run compile-typescript && npm run bundle",
+    "compile-typescript": "tsc",
+    "bundle": "rollup -c rollup.config.js",
+    "start": "http-server ./www -c-1 --cors * "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stevenfowler16/Metar-webapp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stevenfowler16/Metar-webapp/issues"
+  },
+  "homepage": "https://github.com/stevenfowler16/Metar-webapp#readme",
+  "devDependencies": {
+    "typescript": "^3.7.5"
+  }
+}
