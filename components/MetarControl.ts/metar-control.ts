@@ -52,7 +52,7 @@ class MetarControl extends HTMLElement {
             if (this.searchBox.value == '') {
                 card.classList.remove('hidden');
             }
-            else if (!card.data.properties.id.includes(this.searchBox.value)){
+            else if (card.data.properties.id &&  !card.data.properties.id.includes(this.searchBox.value)){
                 card.classList.add('hidden');
             }
         });
