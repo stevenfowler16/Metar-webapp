@@ -1,1 +1,4 @@
+#Remove generated files
 *.js
+#Allow test files
+!*.test.js

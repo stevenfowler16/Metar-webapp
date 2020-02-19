@@ -38,7 +38,7 @@ class MetarControl extends HTMLElement {
         this.appendChild(this.list);
         this.searchBox.addEventListener("input", this.SearchTextHandler.bind(this));
         this.GetLatestReports();
-        this.autoRefresh = setInterval(this.GetLatestReports.bind(this), 300000);
+        this.autoRefresh = window.setInterval(this.GetLatestReports.bind(this), 300000);
     }
 
     /**
