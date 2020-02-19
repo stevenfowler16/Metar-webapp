@@ -1,6 +1,6 @@
 
 import { AviationWeatherController } from "../controllers/aviation-weather-controller";
-import { MetarControl } from "../MetarControl.ts/metar-control";
+import { MetarControl } from "../metarcontrol/metar-control";
 
 
 /**
