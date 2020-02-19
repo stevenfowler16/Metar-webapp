@@ -2,7 +2,10 @@
  A web application that pulls the most recent Metar reports from  https://www.aviationweather.gov/
 
 ### To Start Application 
-npm run start
+npm start
 
 ### To Recompile Code
-npm run build
+npm build
+
+### To Test Code
+npm test
