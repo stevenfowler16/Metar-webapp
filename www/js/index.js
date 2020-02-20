@@ -145,8 +145,12 @@ class MetarControl extends HTMLElement {
         this.aviationCards = [];
         /**User can filter Metar Data on this card */
         this.searchBox = document.createElement("input");
+        /**Filter to change selection */
+        this.filterSelection = document.createElement("input");
         this.metarApi = metarApi;
         this.appendChild(this.searchBox);
+        this.appendChild(this.filterSelection);
+        this.BuildFilterSelection();
         this.appendChild(this.list);
         this.searchBox.addEventListener("input", this.SearchTextHandler.bind(this));
         this.GetLatestReports();
@@ -192,11 +196,19 @@ class MetarControl extends HTMLElement {
     }
     FilterCards() {
         this.aviationCards.forEach(card => {
+            let searchCategory = this.filterSelection.value;
+            //@ts-ignore
+            let valueToSearchOn = card.metarData.properties[searchCategory] !== undefined ? card.metarData.properties[searchCategory] : card.metarData.properties.id;
+            //No idea what to search on just quit
+            if (valueToSearchOn === undefined)
+                return;
             //If empty show all boxes
-            if (this.searchBox.value == '' || (card.metarData.properties.id && card.metarData.properties.id.includes(this.searchBox.value))) {
+            //@ts-ignore
+            if (this.searchBox.value == '' || valueToSearchOn.toString().includes(this.searchBox.value)) {
                 card.classList.remove('hidden');
             }
-            else if (card.metarData.properties.id && !card.metarData.properties.id.includes(this.searchBox.value)) {
+            //@ts-ignore
+            else if (card.metarData.properties.id && !valueToSearchOn.toString().includes(this.searchBox.value)) {
                 card.classList.add('hidden');
             }
         });
@@ -216,6 +228,22 @@ class MetarControl extends HTMLElement {
                 return;
             aviationCard.ToggleHidden(!oldCard.detailedViewOpen);
         });
+    }
+    BuildFilterSelection() {
+        let datalist = document.createElement("datalist");
+        datalist.id = Math.random() * 1000 + "metar-control";
+        this.filterSelection.setAttribute("list", datalist.id);
+        this.filterSelection.appendChild(datalist);
+        datalist.appendChild(CreateOption("wspd", "Wind Speed"));
+        datalist.appendChild(CreateOption("site", "Site"));
+        datalist.appendChild(CreateOption("cover", "Cloud Cover"));
+        function CreateOption(value, name) {
+            let option = document.createElement("option");
+            option.setAttribute("value", value);
+            if (name !== undefined)
+                option.label = name;
+            return option;
+        }
     }
 }
 customElements.define('metar-control', MetarControl);
