@@ -148,7 +148,9 @@ class MetarControl extends HTMLElement {
         /**Filter to change selection */
         this.filterSelection = document.createElement("input");
         this.metarApi = metarApi;
+        this.searchBox.placeholder = 'Search (Case Sensitive)';
         this.appendChild(this.searchBox);
+        this.filterSelection.placeholder = 'Filter';
         this.appendChild(this.filterSelection);
         this.BuildFilterSelection();
         this.appendChild(this.list);
@@ -194,6 +196,7 @@ class MetarControl extends HTMLElement {
     SearchTextHandler(event) {
         this.FilterCards();
     }
+    /**Hides and shows cards based on search input */
     FilterCards() {
         this.aviationCards.forEach(card => {
             let searchCategory = this.filterSelection.value;
@@ -229,6 +232,9 @@ class MetarControl extends HTMLElement {
             aviationCard.ToggleHidden(!oldCard.detailedViewOpen);
         });
     }
+    /**
+     * Builds a few options for dropdown list
+     */
     BuildFilterSelection() {
         let datalist = document.createElement("datalist");
         datalist.id = Math.random() * 1000 + "metar-control";

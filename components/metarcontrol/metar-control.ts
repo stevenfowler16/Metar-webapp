@@ -36,7 +36,9 @@ class MetarControl extends HTMLElement {
     constructor(metarApi: MetarController) {
         super();
         this.metarApi = metarApi;
+        this.searchBox.placeholder = 'Search (Case Sensitive)'
         this.appendChild(this.searchBox);
+        this.filterSelection.placeholder = 'Filter'
         this.appendChild(this.filterSelection);
         this.BuildFilterSelection();
         this.appendChild(this.list);
