@@ -1,9 +1,101 @@
-aviation-card{
-    margin: 1rem;
-    cursor: pointer;
-    display:block;
+
+@import url('https://fonts.googleapis.com/css?family=BioRhyme');
+
+@import url('https://fonts.googleapis.com/css?family=Space+Mono');
+
+
+:root{
+    /* HSL */
+--color1HSL: hsla(200%, 67%, 55%, 1);
+--color2HSL: hsla(174%, 37%, 60%, 1);
+--color3HSL: hsla(47%, 99%, 50%, 1);
+--color4HSL: hsla(187%, 55%, 39%, 1);
+--color5HSL: hsla(26%, 83%, 50%, 1);
+
+/* RGB */
+--color1:  rgba(61, 165, 217, 1);
+--color2: rgba(115, 191, 184, 1);
+--color3: rgba(254, 198, 1, 1);
+--color4: rgba(44, 140, 153, 1);
+--color5: rgba(234, 115, 23, 1);
+}
+
+
+body{
+    background-color: var(--color1);
+    color:var(--color3);
+    font-family: 'Space Mono';
+}
+
+h1,h2,h3,h4,h5,h6{
+    font-family: 'BioRhyme',
 }
 
 .hidden{
     display: none;
 }
+
+metar-control{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+aviation-card{
+        background-color: var(--color3);
+        border-radius: 2px;
+        display: inline-block;
+        min-height: 50px;
+        margin: 1rem;
+        position: relative;
+        width: 350px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        padding: 20px;
+        cursor: pointer;
+        color:var(--color4);
+        user-select: none;
+}    
+
+aviation-card:hover {
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+aviation-card div{
+    margin: 5px 0px;
+    cursor: pointer;
+}
+
+aviation-card label{
+    font-weight:bold;
+    cursor: pointer;
+}
+
+input {
+    font-size:18px;
+    padding:10px 10px 10px 5px;
+    display: inline-block;
+    width:300px;
+    border:none;
+    border-bottom:1px solid var(--color3);
+    background-color: transparent;
+    color: white;
+    margin: 0px 20px;
+  }
+
+::placeholder {
+    color:var(--color3);
+    font-family: 'Space Mono';
+}
+
+input:focus { 
+      outline:none; 
+}
+  
+/* active state */
+input:focus ~ label, input:valid ~ label {
+    top:-20px;
+    font-size:14px;
+    color:#5264AE;
+  }
+

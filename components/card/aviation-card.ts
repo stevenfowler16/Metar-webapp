@@ -27,10 +27,10 @@ class AviationCard extends HTMLElement {
      * Generates the minimal view for the card
      */
     CreateMinimalView() {
-        let obsTime = this.metarData.properties.obsTime !== undefined ? this.metarData.properties.obsTime : 'N/A';
-        this.CreateLabel("Observed Time", obsTime);
         let id = this.metarData.properties.id !== undefined ? this.metarData.properties.id : 'N/A';
         this.CreateLabel("Station Identifier", id);
+        let obsTime = this.metarData.properties.obsTime !== undefined ? this.metarData.properties.obsTime : 'N/A';
+        this.CreateLabel("Observed Time", obsTime);       
         let fltcat = this.metarData.properties.fltcat !== undefined ? this.metarData.properties.fltcat : 'N/A';
         this.CreateLabel("Flight Category", fltcat);
     }
@@ -96,8 +96,9 @@ class AviationCard extends HTMLElement {
 
         let label = document.createElement("label")
         label.textContent = text + ": ";
+        label.className = "header-label";
         div.appendChild(label);
-
+        
         let labelValue = document.createElement("span");
         labelValue.textContent = value;
         div.appendChild(labelValue);
@@ -138,7 +139,7 @@ class AviationCard extends HTMLElement {
     }
 
 }
-
+//@ts-ignore
 customElements.define('aviation-card', AviationCard)
 
 export { AviationCard }

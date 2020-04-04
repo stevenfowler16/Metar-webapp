@@ -39,9 +39,13 @@ class MetarControl extends HTMLElement {
         this.searchBox.placeholder = 'Search (Case Sensitive)'
         this.appendChild(this.searchBox);
         this.filterSelection.placeholder = 'Filter'
-        this.appendChild(this.filterSelection);
+        //this.appendChild(this.filterSelection);
         this.BuildFilterSelection();
         this.appendChild(this.list);
+        this.list.style.display = "flex"
+        this.list.style.justifyContent ="center";
+        this.list.style.flexWrap = "wrap";
+        this.list.style.alignItems = "end";
         this.searchBox.addEventListener("input", this.SearchTextHandler.bind(this));
         this.GetLatestReports();
         this.autoRefresh = window.setInterval(this.GetLatestReports.bind(this), 300000);
@@ -134,7 +138,7 @@ class MetarControl extends HTMLElement {
         }
     }
 }
-
+//@ts-ignore
 customElements.define('metar-control', MetarControl);
 
 export { MetarControl }

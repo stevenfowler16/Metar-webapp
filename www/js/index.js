@@ -39,10 +39,10 @@ class AviationCard extends HTMLElement {
      * Generates the minimal view for the card
      */
     CreateMinimalView() {
-        let obsTime = this.metarData.properties.obsTime !== undefined ? this.metarData.properties.obsTime : 'N/A';
-        this.CreateLabel("Observed Time", obsTime);
         let id = this.metarData.properties.id !== undefined ? this.metarData.properties.id : 'N/A';
         this.CreateLabel("Station Identifier", id);
+        let obsTime = this.metarData.properties.obsTime !== undefined ? this.metarData.properties.obsTime : 'N/A';
+        this.CreateLabel("Observed Time", obsTime);
         let fltcat = this.metarData.properties.fltcat !== undefined ? this.metarData.properties.fltcat : 'N/A';
         this.CreateLabel("Flight Category", fltcat);
     }
@@ -92,6 +92,7 @@ class AviationCard extends HTMLElement {
         let div = document.createElement("div");
         let label = document.createElement("label");
         label.textContent = text + ": ";
+        label.className = "header-label";
         div.appendChild(label);
         let labelValue = document.createElement("span");
         labelValue.textContent = value;
@@ -129,6 +130,7 @@ class AviationCard extends HTMLElement {
         }
     }
 }
+//@ts-ignore
 customElements.define('aviation-card', AviationCard);
 
 /**
@@ -151,9 +153,13 @@ class MetarControl extends HTMLElement {
         this.searchBox.placeholder = 'Search (Case Sensitive)';
         this.appendChild(this.searchBox);
         this.filterSelection.placeholder = 'Filter';
-        this.appendChild(this.filterSelection);
+        //this.appendChild(this.filterSelection);
         this.BuildFilterSelection();
         this.appendChild(this.list);
+        this.list.style.display = "flex";
+        this.list.style.justifyContent = "center";
+        this.list.style.flexWrap = "wrap";
+        this.list.style.alignItems = "end";
         this.searchBox.addEventListener("input", this.SearchTextHandler.bind(this));
         this.GetLatestReports();
         this.autoRefresh = window.setInterval(this.GetLatestReports.bind(this), 300000);
@@ -252,6 +258,7 @@ class MetarControl extends HTMLElement {
         }
     }
 }
+//@ts-ignore
 customElements.define('metar-control', MetarControl);
 
 /**
